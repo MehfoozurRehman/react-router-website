@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useFetcher, useSubmit } from "react-router";
+import { Link } from "react-router";
 import classNames from "classnames";
 
 import iconsHref from "~/icons.svg";
@@ -8,7 +8,7 @@ import type { MenuDoc } from "~/modules/gh-docs/.server/docs";
 import { useNavigation } from "~/hooks/use-navigation";
 import { useDelayedValue } from "~/hooks/use-delayed-value";
 import { useHeaderData } from "../docs-header/use-header-data";
-import { useSidebarState } from "~/pages/docs-layout";
+import { useMenuCollapse } from "~/api/update-menu-collapse";
 
 export function Menu({
   menu,
@@ -99,14 +99,12 @@ function MenuCategoryDetails({
   slug,
   children,
 }: MenuCategoryDetailsType) {
-  const submit = useSubmit();
-  const sidebarState = useSidebarState(slug!);
-
-  console.log({ slug, sidebarState });
+  const [isMenuCollapsed, submitMenuCollapse] = useMenuCollapse(slug!);
 
   let { isActive } = useNavigation(slug);
+
   // By default only the active path is open
-  const [isOpen, setIsOpen] = React.useState(sidebarState);
+  const [isOpen, setIsOpen] = React.useState(isMenuCollapsed);
 
   // Auto open the details element, necessary when navigating from the index page
   React.useEffect(() => {
@@ -126,10 +124,7 @@ function MenuCategoryDetails({
         // of useIsActivePath
         setIsOpen(open);
 
-        submit(
-          { name: slug!, open: String(open) },
-          { navigate: false, method: "post", action: "/_sidebar" }
-        );
+        submitMenuCollapse(open);
       }}
     >
       {children}

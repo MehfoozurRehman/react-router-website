@@ -17,19 +17,26 @@ import {
 import { isHost } from "./modules/http-utils/is-host";
 import iconsHref from "~/icons.svg";
 import { DocSearch } from "./modules/docsearch";
+import type { Route } from "./+types/root";
+import {
+  getMenuCollapseState,
+  menuCollapseStateMiddleware,
+} from "./modules/menu-collapse.server";
 
 import "~/styles/tailwind.css";
 import "@docsearch/css/dist/style.css";
 import "~/styles/docsearch.css";
-import type { Route } from "./+types/root";
+
+export let middleware = [menuCollapseStateMiddleware];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await middlewares(request);
 
   let colorScheme = await parseColorScheme(request);
   let isProductionHost = isHost("reactrouter.com", request);
+  const menuCollapseState = getMenuCollapseState();
 
-  return { colorScheme, isProductionHost };
+  return { colorScheme, isProductionHost, menuCollapseState };
 }
 
 export function headers() {

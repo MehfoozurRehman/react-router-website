@@ -10,6 +10,7 @@ const routes: RouteConfig = [
     route("home", "pages/doc.tsx", { id: "home" }),
     route("changelog", "pages/doc.tsx", { id: "changelog" }),
     route("*", "pages/doc.tsx"),
+    route("_sidebar", "api/sidebar.ts"),
   ]),
 
   // short version URLs for changelogs and stuff

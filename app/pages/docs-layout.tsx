@@ -1,4 +1,4 @@
-import { Outlet, redirect } from "react-router";
+import { Outlet, redirect, useRouteLoaderData } from "react-router";
 import classNames from "classnames";
 
 import { Header } from "~/components/docs-header/docs-header";
@@ -12,11 +12,18 @@ import type { Route } from "./+types/docs-layout";
 import semver from "semver";
 import { useRef } from "react";
 import { useCodeBlockCopyButton } from "~/ui/utils";
+import {
+  getSidebarState,
+  sidebarSessionMiddleware,
+} from "~/modules/sidebar-state.server";
+import invariant from "tiny-invariant";
 
 import docsCss from "~/styles/docs.css?url";
 import { preload } from "react-dom";
 
-export let loader = async ({ request, params }: Route.LoaderArgs) => {
+export let middleware = [sidebarSessionMiddleware];
+
+export async function loader({ request, params }: Route.LoaderArgs) {
   let url = new URL(request.url);
   if (!url.pathname.endsWith("/")) {
     url.pathname += "/";
@@ -56,8 +63,10 @@ export let loader = async ({ request, params }: Route.LoaderArgs) => {
     getHeaderData("en", ref, refParam),
   ]);
 
-  return { menu, header };
-};
+  const sidebarState = getSidebarState();
+
+  return { menu, header, sidebarState };
+}
 
 export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
   preload(docsCss, { as: "style" });
@@ -111,4 +120,13 @@ export default function DocsLayout({ loaderData }: Route.ComponentProps) {
       </div>
     </>
   );
+}
+
+export function useSidebarState(slug: string) {
+  const loaderData =
+    useRouteLoaderData<Route.ComponentProps["loaderData"]>("docs");
+
+  invariant(loaderData, "No loader data found");
+
+  return loaderData.sidebarState[slug] ?? true;
 }

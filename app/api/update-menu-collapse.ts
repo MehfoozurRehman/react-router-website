@@ -5,7 +5,7 @@ import { useRouteLoaderData, useSubmit } from "react-router";
 import invariant from "tiny-invariant";
 import { useCallback, useState } from "react";
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
   let formData = await request.formData();
 
   let category = formData.get("category");
@@ -20,7 +20,8 @@ export async function action({ request }: Route.ActionArgs) {
 
   let parsedOpen = open === "true";
 
-  setMenuCollapseState(category, parsedOpen);
+  // @ts-expect-error huh?
+  setMenuCollapseState(context, category, parsedOpen);
   return parsedOpen;
 }
 
@@ -29,7 +30,7 @@ export function useMenuCollapse(category?: string) {
   invariant(rootLoaderData, "No root loader data found");
 
   const isMenuOpen = category
-    ? rootLoaderData.menuCollapseState[category] ?? true
+    ? (rootLoaderData.menuCollapseState[category] ?? true)
     : true;
   const [isOpen, setIsOpen] = useState(isMenuOpen);
   const submit = useSubmit();
@@ -46,10 +47,10 @@ export function useMenuCollapse(category?: string) {
           navigate: false,
           method: "post",
           action: "/_update-menu-collapse",
-        }
+        },
       );
     },
-    [category, submit]
+    [category, submit],
   );
 
   return [isOpen, submitMenuCollapse] as const;

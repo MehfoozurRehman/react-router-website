@@ -1,10 +1,10 @@
 import {
   createCookieSessionStorage,
-  type MiddlewareFunctionArgs,
-  type RouterContext,
+  unstable_createContext,
   type Session,
+  type unstable_MiddlewareFunction,
+  type unstable_RouterContextProvider,
 } from "react-router";
-import { createContext, provide, pull } from "@ryanflorence/async-provider";
 
 type MenuCollapseState = {
   "menu-collapse-state"?: Record<string, boolean>;
@@ -21,37 +21,34 @@ let storage = createCookieSessionStorage<MenuCollapseState>({
   },
 });
 
-let menuCollapseStateContext = createContext<Session<MenuCollapseState>>();
+let menuCollapseStateContext =
+  unstable_createContext<Session<MenuCollapseState>>();
 
-export let menuCollapseStateMiddleware = async ({
-  request,
-  next,
-}: MiddlewareFunctionArgs<RouterContext, Response>) => {
+export let menuCollapseStateMiddleware: unstable_MiddlewareFunction<
+  Response
+> = async ({ request, context }, next) => {
   let cookieHeader = request.headers.get("Cookie");
   let session = await storage.getSession(cookieHeader);
-  // Setting the cookie and wrapping the response in the context
-  return provide([[menuCollapseStateContext, session]], async () => {
-    try {
-      let res = await next();
-      res.headers.append("Set-Cookie", await storage.commitSession(session));
-      return res;
-    } catch (e) {
-      console.log("session middleware error", request.url);
-      console.log(e);
-      return new Response("Oops, something went wrong.", { status: 500 });
-    }
-  });
+  context.set(menuCollapseStateContext, session);
+
+  let res = await next();
+  res.headers.append("Set-Cookie", await storage.commitSession(session));
+  return res;
 };
 
-export function setMenuCollapseState(category: string, value: boolean) {
-  let session = pull(menuCollapseStateContext);
+export function setMenuCollapseState(
+  context: unstable_RouterContextProvider,
+  category: string,
+  value: boolean,
+) {
+  let session = context.get(menuCollapseStateContext);
   let state = session.get("menu-collapse-state") || {};
   state[category] = value;
   session.set("menu-collapse-state", state);
 }
 
-export function getMenuCollapseState() {
-  let session = pull(menuCollapseStateContext);
+export function getMenuCollapseState(context: unstable_RouterContextProvider) {
+  let session = context.get(menuCollapseStateContext);
   let state = session.get("menu-collapse-state") || {};
   return state;
 }

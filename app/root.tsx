@@ -1,4 +1,3 @@
-import type { LoaderFunctionArgs } from "react-router";
 import {
   Link,
   Links,
@@ -27,14 +26,15 @@ import "~/styles/tailwind.css";
 import "@docsearch/css/dist/style.css";
 import "~/styles/docsearch.css";
 
-export let middleware = [menuCollapseStateMiddleware];
+export let unstable_middleware = [menuCollapseStateMiddleware];
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
   await middlewares(request);
 
   let colorScheme = await parseColorScheme(request);
   let isProductionHost = isHost("reactrouter.com", request);
-  const menuCollapseState = getMenuCollapseState();
+  // @ts-expect-error huh?
+  const menuCollapseState = getMenuCollapseState(context);
 
   return { colorScheme, isProductionHost, menuCollapseState };
 }

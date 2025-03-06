@@ -18,7 +18,7 @@ import iconsHref from "~/icons.svg";
 import { DocSearch } from "./modules/docsearch";
 import type { Route } from "./+types/root";
 import {
-  getMenuCollapseState,
+  menuCollapseContext,
   menuCollapseStateMiddleware,
 } from "./modules/menu-collapse.server";
 
@@ -33,8 +33,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
   let colorScheme = await parseColorScheme(request);
   let isProductionHost = isHost("reactrouter.com", request);
-  // @ts-expect-error huh?
-  const menuCollapseState = getMenuCollapseState(context);
+  const menuCollapseState = menuCollapseContext(context).get();
 
   return { colorScheme, isProductionHost, menuCollapseState };
 }

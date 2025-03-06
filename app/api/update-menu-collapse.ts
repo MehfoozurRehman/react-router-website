@@ -1,4 +1,4 @@
-import { setMenuCollapseState } from "~/modules/menu-collapse.server";
+import { menuCollapseContext } from "~/modules/menu-collapse.server";
 import type { Route } from "./+types/update-menu-collapse";
 import type { Info as RootInfo } from "../+types/root";
 import { useRouteLoaderData, useSubmit } from "react-router";
@@ -20,8 +20,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   let parsedOpen = open === "true";
 
-  // @ts-expect-error huh?
-  setMenuCollapseState(context, category, parsedOpen);
+  menuCollapseContext(context).set(category, parsedOpen);
   return parsedOpen;
 }
 

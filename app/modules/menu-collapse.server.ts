@@ -36,19 +36,18 @@ export let menuCollapseStateMiddleware: unstable_MiddlewareFunction<
   return res;
 };
 
-export function setMenuCollapseState(
-  context: unstable_RouterContextProvider,
-  category: string,
-  value: boolean,
-) {
+export function menuCollapseContext(context: unstable_RouterContextProvider) {
   let session = context.get(menuCollapseStateContext);
-  let state = session.get("menu-collapse-state") || {};
-  state[category] = value;
-  session.set("menu-collapse-state", state);
-}
 
-export function getMenuCollapseState(context: unstable_RouterContextProvider) {
-  let session = context.get(menuCollapseStateContext);
-  let state = session.get("menu-collapse-state") || {};
-  return state;
+  return {
+    get: () => {
+      let state = session.get("menu-collapse-state") || {};
+      return state;
+    },
+    set: (category: string, value: boolean) => {
+      let state = session.get("menu-collapse-state") || {};
+      state[category] = value;
+      session.set("menu-collapse-state", state);
+    },
+  };
 }

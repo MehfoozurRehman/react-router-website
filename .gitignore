@@ -15,3 +15,5 @@ node_modules
 app/modules/gh-docs/.server/__fixture__/tar.tgz
 
 *.code-workspace
+temp_auto_push.bat
+temp_interactive_push.bat

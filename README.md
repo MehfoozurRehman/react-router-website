@@ -1,89 +1,56 @@
-# React Router Website!
+# React Router Official Documentation & Website
 
-## Contributing
+The official documentation website, tutorial guides, and interactive API reference for React Router built with React Router v7, React 19, Vite, Express, Algolia DocSearch, and Shiki.
 
-If you want to make a contribution
+## Overview
 
-- [Fork and clone](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repo
-- Create a branch
-- Push any changes you make to your branch
-- Open up a PR in this Repo
+`react-router-website` powers the official documentation platform for React Router v7. It features server-side rendering with `@react-router/express`, unified Markdown/MDX parsing (Unified, Remark, Rehype), syntax highlighting (Shiki), Algolia DocSearch integration, and Docker containerization.
 
-## Setup
+## Tech Stack
 
-First setup your `.env` file, use `.env.example` to know what to set.
+- **Framework**: [React Router](https://reactrouter.com/) (v7 with `@react-router/express` server)
+- **Frontend Core**: React 19, TypeScript
+- **Documentation Pipeline**: Unified, Remark GFM, Rehype, Shiki syntax highlighter
+- **Search**: Algolia DocSearch (`@docsearch/react`)
+- **Styling**: Tailwind CSS (`@tailwindcss/postcss`, Tailwind v3)
+- **Testing**: Vitest, Happy DOM
+- **Deployment**: Docker, Fly.io (`fly.production.toml`)
 
-```sh
-cp .env.example .env
-```
+## Prerequisites
 
-Install dependencies
+- Node.js (v22 or higher recommended)
+- Package manager (`npm`)
 
-```sh
-npm i
-```
+## Getting Started
 
-## Local Development
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-Now you should be good to go:
+2. **Configure Environment Variables**:
+   Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-```sh
-npm run dev
-```
+3. **Run the Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-To preview local changes to the `docs` folder in the React Router repo, select "local" from the version dropdown menu on the site. Make sure you have the [react-router repo](https://github.com/remix-run/react-router) cloned locally and `LOCAL_REPO_RELATIVE_PATH` is pointed to the correct filepath.
+4. **Access the Documentation**:
+   Open `http://localhost:3000` in your web browser.
 
-We leverage a number of LRUCache's to server-side cache various resources, such as processed markdown from GitHub, that expire at various times (usually after 5 minutes). If you want them to expire immediately for local development, set the `NO_CACHE` environment variable.
+## Available Scripts
 
-```sh
-NO_CACHE=1 npm run dev
-```
+- `npm run dev` - Starts the development Express server with React Router HMR.
+- `npm run build` - Compiles the production build via `react-router build`.
+- `npm start` - Starts the production Express server.
+- `npm test` - Runs unit test suite via Vitest.
+- `npm run typecheck` - Runs React Router typegen and TypeScript validation.
+- `npm run format` - Formats the codebase using Prettier.
 
-Note that by default this assumes the relative path to your local copy of the React Router docs is `../react-router`. This can be configured via `LOCAL_REPO_RELATIVE_PATH` in your `.env` file.
+## Author
 
-## Preview
-
-To preview the production build locally:
-
-```sh
-npm run build
-npm run preview
-```
-
-## Deployment
-
-The production server is always in sync with `main`
-
-```sh
-git push origin main
-open https://reactrouter.com
-```
-
-Pushing the "stage" tag will deploy to [staging](https://reactrouterdotcomstaging.fly.dev/).
-
-```sh
-git checkout my/branch
-
-# moves the `stage` tag and pushes it, triggering a deploy
-npm run push:stage
-```
-
-When you're happy with it, merge your branch into `main` and push.
-
-## CSS Notes
-
-You'll want the [tailwind VSCode plugin](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) fer sure, the hints are amazing.
-
-The color scheme has various shades but we also have a special "brand" rule for each of our brand colors so we don't have to know the specific number of that color like this: `<div className="text-pink-brand" />`.
-
-We want to use Tailwind's default classes as much as possible to avoid a large CSS file. A few things you can do to keep the styles shared:
-
-- Avoid changing anything but the theme in `tailwind.config.js`, no special classes, etc.
-- Avoid "inline rules" like `color-[#ccc]` as much as possible.
-- Silly HTML (like a wrapper div to add padding on a container) is better than one-off css rules.
-
-## Algolia Search
-
-We use [DocSearch](https://docsearch.algolia.com/) by Algolia for our documentation's search. The site is automatically scraped and indexed weekly by the [Algolia Crawler](https://crawler.algolia.com/).
-
-If the doc search results ever seem outdated or incorrect be sure to check that the crawler isn't blocked. If it is, it might just need to be canceled and restarted to kick things off again. There is also an editor in the Crawler admin that lets you adjust the crawler's script if needed.
+Created by [Mehfooz-ur-Rehman](https://github.com/MehfoozurRehman).
